@@ -1,112 +1,63 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {SafeAreaView, StyleSheet, Dimensions, BackHandler} from 'react-native';
+import WebView from 'react-native-webview';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+const Tab = createBottomTabNavigator();
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+const Webview = () => {
+  const handleSetRef = _ref => {
+    webviewRef = _ref;
+    };
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  const onNavigationStateChange = navState => {
+    webviewRef.canGoBack = navState.canGoBack;
+    if (!navState.url.includes('http://172.30.1.16:3000')) {
+      // 새 탭 열기
+      Linking.openURL(navState.url);
+      return false;
+    }
+  };
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const onShouldStartLoadWithRequest = event => {
+      if (!event.url.includes("http://172.30.1.16:3000")) {
+        Linking.openURL(event.url);
+        return false;
+      }
+      return true;
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="hanes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+    <SafeAreaView style={styles.container}>
+      <WebView
+        ref={handleSetRef}
+        style={styles.webview}
+        source={{uri: 'http://172.30.1.16:3000'}}
+        onNavigationStateChange={onNavigationStateChange}
+      onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}      />
     </SafeAreaView>
+    <NavigationContainer>
+      <Tab.Navigator>
+      </Tab.Navigator>
+
+    </NavigationContainer>
   );
 };
 
+export default Webview;
+
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  webview: {
+    flex: 1,
+    width: windowWidth,
+    height: windowHeight,
   },
 });
-
-export default App;
