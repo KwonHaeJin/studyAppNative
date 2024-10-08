@@ -3,51 +3,31 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {SafeAreaView, StyleSheet, Dimensions, BackHandler} from 'react-native';
 import WebView from 'react-native-webview';
+import HomeScreen from './Home';
+import CameraScreen from './Camera';
+import ListScreen from './List';
+import MypageScreen from './Mypage';
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const Tab = createBottomTabNavigator();
 
-const Webview = () => {
-  const handleSetRef = _ref => {
-    webviewRef = _ref;
-    };
-
-  const onNavigationStateChange = navState => {
-    webviewRef.canGoBack = navState.canGoBack;
-    if (!navState.url.includes('http://172.30.1.16:3000')) {
-      // 새 탭 열기
-      Linking.openURL(navState.url);
-      return false;
-    }
-  };
-
-  const onShouldStartLoadWithRequest = event => {
-      if (!event.url.includes("http://172.30.1.16:3000")) {
-        Linking.openURL(event.url);
-        return false;
-      }
-      return true;
-  };
-
+const App = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <WebView
-        ref={handleSetRef}
-        style={styles.webview}
-        source={{uri: 'http://172.30.1.16:3000'}}
-        onNavigationStateChange={onNavigationStateChange}
-      onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}      />
-    </SafeAreaView>
+    <View style={styles.container}>
     <NavigationContainer>
-      <Tab.Navigator>
-      </Tab.Navigator>
+          <Tab.Navigator>
+          </Tab.Navigator>
 
-    </NavigationContainer>
+        </NavigationContainer>
+
+    </View>
+
   );
 };
 
-export default Webview;
+export default App;
 
 const styles = StyleSheet.create({
   container: {
