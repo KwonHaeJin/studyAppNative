@@ -1,20 +1,21 @@
-import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {SafeAreaView, StyleSheet, Dimensions, BackHandler} from 'react-native';
+import React, {useRef} from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SafeAreaView, StyleSheet, Dimensions, BackHandler } from 'react-native';
 import WebView from 'react-native-webview';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const List = () => {
+  const webviewRef = useRef(null);
   const handleSetRef = _ref => {
     webviewRef = _ref;
-    };
+  };
 
   const onNavigationStateChange = navState => {
     webviewRef.canGoBack = navState.canGoBack;
-    if (!navState.url.includes('http://172.16.1.91:3000')) {
+    if (!navState.url.includes('http://172.30.1.78:3000')) {
       // 새 탭 열기
       Linking.openURL(navState.url);
       return false;
@@ -22,11 +23,11 @@ const List = () => {
   };
 
   const onShouldStartLoadWithRequest = event => {
-      if (!event.url.includes("http://172.16.1.91:3000")) {
-        Linking.openURL(event.url);
-        return false;
-      }
-      return true;
+    if (!event.url.includes("http://172.30.1.78:3000")) {
+      Linking.openURL(event.url);
+      return false;
+    }
+    return true;
   };
 
   return (
@@ -34,9 +35,10 @@ const List = () => {
       <WebView
         ref={handleSetRef}
         style={styles.webview}
-        source={{uri: 'http://172.16.1.91:3000'}}
+        source={{ uri: 'http://172.30.1.78:3000' }}
         onNavigationStateChange={onNavigationStateChange}
-      onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}      />
+        onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+      />
     </SafeAreaView>
 
   );
